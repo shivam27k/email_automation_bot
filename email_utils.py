@@ -22,22 +22,22 @@ def read_csv(file_path):
         print(f"Error reading CSV file: {e}")
         return []
 
-def generate_email_content(name, job_role, company_name):
+def generate_email_content(name, job_role, company_name, sender_name):
     """Generates email subject and body."""
     subject = f"Application for {job_role} Position at {company_name}"
     body = f"""
-    Hi {name},
+Hi {name},
 
-    I hope you're doing well.
+I hope you're doing well.
 
-    I am writing to express my interest in the {job_role} position at {company_name}. I believe my skills align perfectly with the role.
+I am writing to express my interest in the {job_role} position at {company_name}. I believe my skills align perfectly with the role.
 
-    Currently, I am working as a ----- at -----, and I am looking for a new challenge. I would love to connect and discuss how my expertise can contribute to your team.
+Currently, I am working as a ----- at -----, and I am looking for a new challenge. I would love to connect and discuss how my expertise can contribute to your team.
 
-    I have attached my resume for your review and look forward to hearing from you.
+I have attached my resume for your review and look forward to hearing from you.
 
-    Best regards,  
-    Shivam Kumar
+Best regards,  
+{sender_name}
     """
     return subject, body
 

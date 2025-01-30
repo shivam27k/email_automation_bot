@@ -9,7 +9,7 @@ def send_email(recipient):
     name, email, job_role, company_name = recipient["name"], recipient["email"], recipient["job_role"], recipient["company_name"]
     
     msg = MIMEMultipart()
-    subject, body = generate_email_content(name, job_role, company_name)
+    subject, body = generate_email_content(name, job_role, company_name, sender_name=SENDER_NAME)
     
     msg["From"] = f"{SENDER_NAME} <{SENDER_EMAIL}>"  # Use sender name from config
     msg["To"] = email
