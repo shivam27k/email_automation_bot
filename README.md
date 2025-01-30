@@ -41,6 +41,7 @@ This Python-based Email Sender Bot automates the process of sending personalized
 #### Step 4: Go to `config.py` file and edit these lines:
 
 ```
+SENDER_NAME = "your_name"
 SENDER_EMAIL = "your_email@gmail.com"
 SENDER_PASSWORD = "your_passsword"
 RESUME_PATH = "your_resume_path"

@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from config import SMTP_SERVER, SMTP_PORT, SENDER_EMAIL, SENDER_PASSWORD, FILE_PATH, CSV_FILE_PATH
+from config import SMTP_SERVER, SMTP_PORT, SENDER_EMAIL, SENDER_PASSWORD, FILE_PATH, CSV_FILE_PATH, SENDER_NAME
 from email_utils import read_csv, generate_email_content, attach_file
 
 def send_email(recipient):
@@ -11,7 +11,7 @@ def send_email(recipient):
     msg = MIMEMultipart()
     subject, body = generate_email_content(name, job_role, company_name)
     
-    msg["From"] = SENDER_EMAIL
+    msg["From"] = f"{SENDER_NAME} <{SENDER_EMAIL}>"  # Use sender name from config
     msg["To"] = email
     msg["Subject"] = subject
     msg.attach(MIMEText(body, "plain"))
