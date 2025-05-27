@@ -3,7 +3,7 @@
 Must read the [NOTE](#note) section at the bottom of this file.
 Star this project if you liked it.
 
-Feel free to reach out to me at [shivam_27k](https://www.instagram.com/shivam_27k/) on instagram >\_<.
+Feel free to reach out to me at [shivam-27k](https://www.linkedin.com/in/shivam-27k) on LinkedIn >\_<.
 
 ## Overview
 
