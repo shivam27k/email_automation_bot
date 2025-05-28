@@ -1,81 +1,126 @@
-# Email Sender Bot
+# 📧 Email Sender Bot with Threading Support
 
 Must read the [NOTE](#note) section at the bottom of this file.
-Star this project if you liked it.
 
-Feel free to reach out to me at [shivam-27k](https://www.linkedin.com/in/shivam-27k) on LinkedIn >\_<.
+⭐ Star this project if you find it useful!🔗 Feel free to connect with me on LinkedIn at [shivam-27k](https://www.linkedin.com/in/shivam-27k) >\_<.
 
-## Overview
+## 🧐 Overview
 
-This Python-based Email Sender Bot automates the process of sending personalized emails to multiple recipients listed in a CSV file. It customizes each email with the recipient’s name, job role, and company name while also attaching a resume.
+This Python-based Email Sender Bot automates sending personalized emails to multiple recipients from a CSV file. It customizes each email with the recipient’s name, job role, and company name — and attaches a PDF resume.
 
-## Features
+Now enhanced with multi-threading for faster delivery — with user-controlled thread count and built-in safety warnings to help you stay under Gmail’s sending limits.
 
--   Reads recipient details from a CSV file.
+## ✨ Features
 
--   Sends personalized emails with customized greetings.
+-   ✅ Read recipient info from a CSV file
 
--   Automatically attaches a resume (PDF format) to each email.
+-   ✅ Customize subject and body using dynamic recipient info
 
--   Uses SMTP to send emails securely.
+-   ✅ Attach resume (PDF) automatically
 
--   Logs sent emails to track the status.
+-   ✅ Secure SMTP login with Gmail App Password
 
-# How to use Email Sender Bot
+-   ✅ Multi-threaded sending for better speed
 
-## Pre-requisites:
+-   ✅ User-defined thread count (max 5 threads)
 
-1. Install Python on your system. (Google or YouTube how to install Python)
-2. Make sure you're in the root directory of this project
+-   ✅ Built-in delay & throttling to avoid Gmail spam filters
 
-## Now you are ready to follow these steps:
+-   ✅ Displays warnings about Gmail sending limits
 
-#### Step 1: Install all the dependencies needed by running this command in the terminal:
+# ⚙️ How to Use
 
-`pip install -r requirements.txt`
+#### 1. ✅ Prerequisites
 
-#### Step 2: Replace `example.csv` file with your own CSV file with similar fields and structure.
+Install Python 3.x from the official site (Google it if needed).
 
-#### Step 3: Replace `example.pdf` file with the file you want to attach to your email.
+Make sure you're in the root directory of this project.
 
-#### Step 4: Go to `config.py` file and edit these lines:
+#### 2. 📦 Install Dependencies
 
 ```
-SENDER_NAME = "your_name"
+pip install -r requirements.txt
+```
+
+#### 3. 📄 Replace Example Files
+
+Replace `example.csv` with your own recipient list.The CSV file must include the following headers:
+
+`name,email,job_role,company_name`
+
+Replace `example.pdf` with the file you want to attach in the mail.
+
+#### 4. ⚙️ Configure Your Email Settings
+
+Open config.py and edit these values:
+
+```
+SENDER_NAME = "Your Name"
 SENDER_EMAIL = "your_email@gmail.com"
-SENDER_PASSWORD = "your_passsword"
-RESUME_PATH = "your_resume_path"
-CSV_FILE_PATH = "your_csv_file_path"
+SENDER_PASSWORD = "your_app_password"  # See NOTE below
+FILE_PATH = "path/to/your_resume.pdf"
+CSV_FILE_PATH = "path/to/your_recipients.csv"
 ```
 
-#### Step 5: Run the following command:
+#### 5. 🚀 Run the Bot
 
 ```
 python email_sender.py
 ```
 
-## Note:
+You’ll be shown a Gmail safety warning and then prompted to enter how many threads you want to use (between 1–5). The more threads, the faster the process — but higher the risk of getting flagged by Gmail.
 
--   `SENDER_PASSWORD` is NOT your Gmail password.
-    You must generate an `App Password` using this link: [Google App Password Generator](https://myaccount.google.com/apppasswords).
+⚠️ Gmail Safety Guidelines
 
-You will have to enable 2-factor authentication in your Gmail to generate this app password.
+When sending emails via Gmail SMTP, keep the following in mind:
 
-Follow these steps to enable 2-factor authentication:
+📬 Normal Gmail accounts support 100–150 emails/day max.
+
+⛔ Don't send too many at once (20–30 per batch is safe).
+
+🚨 More than 5 threads or spamming too fast can get your account flagged or suspended.
+
+✅ Use randomized delays and respect sending intervals.
+
+🧐 If you're unsure, use 1–2 threads and space out large sends.
+
+## NOTE
+
+Your Gmail `SENDER_PASSWORD` is NOT your normal password. You must generate an `App Password` by following these steps:
+
+#### Follow these steps to enable 2-factor authentication:
 
 1. Open your [Google Account](https://myaccount.google.com/).
 2. In the navigation panel, select "Security".
 3. Under “How you sign in to Google,” select Turn on 2-Step Verification.
 4. Follow the on-screen steps.
 
--   _Once you have enabled 2-step verification. Go to the link given above and generate your app password_
+#### Generate your app password
 
-_Then copy and paste your '16 letters' password as it is there, and you'll be good to go_
+1. You must generate an `App Password` using this link: [Google App Password Generator](https://myaccount.google.com/apppasswords).
 
--   _You MUST edit and change the template of the message being sent in the "generate_email_content" function in the "email_utils" file_
+2. Copy the 16-digit password and paste it in config.py under SENDER_PASSWORD.
 
-## Results:
+## 📬 Output Example
 
-This will be sent to all the emails mentioned in the csv file with their respective name, email address and company name replaced.
+Each recipient gets a custom email like this:
+
+Hi John,
+
+I hope you're doing well.I am writing to express my interest in the Software Engineer position at Acme Corp...
+
+[Your resume will be attached]
+
+## ✅ Final Tips
+
+Always test by sending it to your own email first.
+
+Start with 1–2 threads to warm up.
+
+Update the email content inside the generate_email_content() function in email_utils.py.
+
+📸 Result Preview
 
 ![Example image of the email sent](example.jpg)
+
+Happy mailing! 📨
