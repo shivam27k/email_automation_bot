@@ -48,6 +48,11 @@ Replace `example.csv` with your own recipient list.The CSV file must include the
 
 `name,email,job_role,company_name`
 
+Optional headers for stronger personalization:
+
+- `company_website` (recommended, e.g. `openai.com`)
+- `company_context` (manual notes if you want full control)
+
 Replace `example.pdf` with the file you want to attach in the mail.
 
 #### 4. ⚙️ Configure Your Email Settings
@@ -57,10 +62,29 @@ Open config.py and edit these values:
 ```
 SENDER_NAME = "Your Name"
 SENDER_EMAIL = "your_email@gmail.com"
-SENDER_PASSWORD = "your_app_password"  # See NOTE below
 FILE_PATH = "path/to/your_resume.pdf"
 CSV_FILE_PATH = "path/to/your_recipients.csv"
 ```
+
+Set passwords/keys using a `.env` file (recommended):
+
+1. Copy `.env.example` to `.env`
+2. Fill in your values:
+
+```powershell
+SENDER_PASSWORD=your_gmail_app_password
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+Gemini prompt/style settings are in `config.py`:
+
+`EMAIL_STYLE_GUIDE` and `SENDER_PROFILE`
+
+Company research settings in `config.py`:
+
+- `ENABLE_COMPANY_RESEARCH`
+- `COMPANY_RESEARCH_TIMEOUT_SECONDS`
+- `COMPANY_RESEARCH_MAX_CHARS`
 
 #### 5. 🚀 Run the Bot
 
@@ -99,7 +123,7 @@ Your Gmail `SENDER_PASSWORD` is NOT your normal password. You must generate an `
 
 1. You must generate an `App Password` using this link: [Google App Password Generator](https://myaccount.google.com/apppasswords).
 
-2. Copy the 16-digit password and paste it in config.py under SENDER_PASSWORD.
+2. Copy the 16-digit password and set it as environment variable `SENDER_PASSWORD`.
 
 ## 📬 Output Example
 
@@ -117,7 +141,10 @@ Always test by sending it to your own email first.
 
 Start with 1–2 threads to warm up.
 
-Update the email content inside the generate_email_content() function in email_utils.py.
+Update email generation style in `config.py`:
+
+- `EMAIL_STYLE_GUIDE` for output structure/tone
+- `SENDER_PROFILE` for your background/context
 
 📸 Result Preview
 

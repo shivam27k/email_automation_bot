@@ -1,1 +1,3 @@
 configshiv.py
+.env
+__pycache__/

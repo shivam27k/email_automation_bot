@@ -2,6 +2,7 @@ import smtplib
 import threading
 import time
 import random
+from queue import Empty, Queue
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from config import (
@@ -12,8 +13,24 @@ from config import (
     FILE_PATH,
     CSV_FILE_PATH,
     SENDER_NAME,
+    USE_GEMINI,
+    GEMINI_API_KEY,
+    GEMINI_MODEL,
+    GEMINI_TIMEOUT_SECONDS,
+    GEMINI_TEMPERATURE,
+    GEMINI_DEBUG,
+    GEMINI_MAX_RETRIES,
+    GEMINI_RETRY_BASE_SECONDS,
+    GEMINI_RETRY_MAX_SECONDS,
+    EMAIL_STYLE_GUIDE,
+    SENDER_PROFILE,
+    ENABLE_COMPANY_RESEARCH,
+    COMPANY_RESEARCH_TIMEOUT_SECONDS,
+    COMPANY_RESEARCH_MAX_CHARS,
+    get_runtime_diagnostics,
 )
-from email_utils import read_csv, generate_email_content, attach_file
+from email_utils import read_csv, attach_file
+from email_content_generator import EmailContentGenerator
 
 MAX_THREADS = 5
 MAX_EMAILS_PER_BATCH = 30
@@ -55,14 +72,14 @@ def get_thread_count():
             print("❌ Invalid input. Please enter a numeric value.")
 
 
-def send_email(recipient):
+def send_email(recipient, content_generator):
     name = recipient["name"]
     email = recipient["email"]
     job_role = recipient["job_role"]
     company_name = recipient["company_name"]
 
     msg = MIMEMultipart()
-    subject, body = generate_email_content(name, job_role, company_name, sender_name=SENDER_NAME)
+    subject, body = content_generator.generate(recipient)
 
     msg["From"] = f"{SENDER_NAME} <{SENDER_EMAIL}>"
     msg["To"] = email
@@ -86,13 +103,31 @@ def send_email(recipient):
     time.sleep(random.uniform(2, 6))  # Random delay to mimic human behavior
 
 
-def thread_worker(queue):
-    while queue:
-        recipient = queue.pop(0)
-        send_email(recipient)
+def thread_worker(recipient_queue, content_generator):
+    while True:
+        try:
+            recipient = recipient_queue.get_nowait()
+        except Empty:
+            return
+
+        try:
+            send_email(recipient, content_generator)
+        finally:
+            recipient_queue.task_done()
 
 
 def main():
+    diagnostics = get_runtime_diagnostics()
+    print("\nConfig diagnostics:")
+    print(f"- cwd: {diagnostics['cwd']}")
+    print(f"- .env path: {diagnostics['env_file_path']}")
+    print(f"- dotenv available: {diagnostics['dotenv_available']}")
+    print(f"- .env exists: {diagnostics['dotenv_file_exists']}")
+    print(f"- .env loaded: {diagnostics['dotenv_loaded']}")
+    print(f"- GEMINI enabled: {diagnostics['gemini_enabled']}")
+    print(f"- GEMINI_API_KEY present: {diagnostics['gemini_api_key_present']} (len={diagnostics['gemini_api_key_len']})")
+    print(f"- SENDER_PASSWORD present: {diagnostics['sender_password_present']} (len={diagnostics['sender_password_len']})")
+
     recipients = read_csv(CSV_FILE_PATH)
     total = len(recipients)
 
@@ -103,13 +138,35 @@ def main():
     safety_warning(total)
     thread_count = get_thread_count()
 
+    content_generator = EmailContentGenerator(
+        sender_name=SENDER_NAME,
+        sender_profile=SENDER_PROFILE,
+        style_guide=EMAIL_STYLE_GUIDE,
+        use_gemini=USE_GEMINI,
+        gemini_api_key=GEMINI_API_KEY,
+        gemini_model=GEMINI_MODEL,
+        gemini_temperature=GEMINI_TEMPERATURE,
+        gemini_timeout_seconds=GEMINI_TIMEOUT_SECONDS,
+        gemini_debug=GEMINI_DEBUG,
+        gemini_max_retries=GEMINI_MAX_RETRIES,
+        gemini_retry_base_seconds=GEMINI_RETRY_BASE_SECONDS,
+        gemini_retry_max_seconds=GEMINI_RETRY_MAX_SECONDS,
+        enable_company_research=ENABLE_COMPANY_RESEARCH,
+        company_research_timeout_seconds=COMPANY_RESEARCH_TIMEOUT_SECONDS,
+        company_research_max_chars=COMPANY_RESEARCH_MAX_CHARS,
+    )
+
     threads = []
-    recipient_queue = recipients.copy()
+    recipient_queue = Queue()
+    for recipient in recipients:
+        recipient_queue.put(recipient)
 
     for _ in range(thread_count):
-        t = threading.Thread(target=thread_worker, args=(recipient_queue,))
+        t = threading.Thread(target=thread_worker, args=(recipient_queue, content_generator))
         t.start()
         threads.append(t)
+
+    recipient_queue.join()
 
     for t in threads:
         t.join()
