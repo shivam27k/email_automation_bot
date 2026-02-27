@@ -5,7 +5,7 @@ import random
 from queue import Empty, Queue
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from config import (
+from src.email_bot.config import (
     SMTP_SERVER,
     SMTP_PORT,
     SENDER_EMAIL,
@@ -29,8 +29,8 @@ from config import (
     COMPANY_RESEARCH_MAX_CHARS,
     get_runtime_diagnostics,
 )
-from email_utils import read_csv, attach_file
-from email_content_generator import EmailContentGenerator
+from src.email_bot.email_utils import read_csv, attach_file
+from src.email_bot.email_content_generator import EmailContentGenerator
 
 MAX_THREADS = 5
 MAX_EMAILS_PER_BATCH = 30

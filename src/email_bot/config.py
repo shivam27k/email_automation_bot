@@ -6,7 +6,8 @@ except ImportError:
     load_dotenv = None
 
 BASE_DIR = Path(__file__).resolve().parent
-ENV_FILE_PATH = BASE_DIR / ".env"
+PROJECT_ROOT = BASE_DIR.parent.parent
+ENV_FILE_PATH = PROJECT_ROOT / ".env"
 DOTENV_AVAILABLE = load_dotenv is not None
 DOTENV_FILE_EXISTS = ENV_FILE_PATH.exists()
 DOTENV_LOADED = False
@@ -23,8 +24,8 @@ SENDER_EMAIL = "shivamkumar027k@gmail.com"
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD", "")
 
 # Files
-FILE_PATH = "example.pdf"
-CSV_FILE_PATH = "emails.csv"
+FILE_PATH = "assets/example.pdf"
+CSV_FILE_PATH = "data/emails.csv"
 
 # Gemini configuration
 USE_GEMINI = True
